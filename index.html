@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fernando Vélez | Desarrollador de Software</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#080c14;--bg-card:#0d1320;--bg-dark:#060a10;
+      --border:rgba(255,255,255,0.07);--accent:#e8ff47;
+      --accent-dim:rgba(232,255,71,0.10);--text:#e8eaf0;
+      --text-muted:#5a6278;--text-dim:#8892a4;
+      --font-display:'Bebas Neue',sans-serif;
+      --font-body:'DM Sans',sans-serif;
+      --font-mono:'DM Mono',monospace;
+      --radius:12px;--transition:0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;cursor:none}
+    a{color:inherit;text-decoration:none}ul{list-style:none}
+    .container{width:100%;max-width:1140px;margin:0 auto;padding:0 2rem}
+
+    /* CURSOR */
+    .cursor{width:36px;height:36px;border:1.5px solid var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;mix-blend-mode:difference}
+    .cursor-dot{width:5px;height:5px;background:var(--accent);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+
+    /* NAV */
+    .nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2.5rem;transition:background var(--transition)}
+    .nav.scrolled{background:rgba(8,12,20,.9);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+    .nav-logo{font-family:var(--font-display);font-size:1.75rem;letter-spacing:.05em}
+    .nav-dot{color:var(--accent)}
+    .nav-links{display:flex;gap:2.5rem}
+    .nav-link{font-family:var(--font-mono);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);position:relative;transition:color var(--transition)}
+    .nav-link::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1px;background:var(--accent);transition:width var(--transition)}
+    .nav-link:hover{color:var(--accent)}.nav-link:hover::after{width:100%}
+    .hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:none;padding:4px}
+    .hamburger span{display:block;width:24px;height:1.5px;background:var(--text);transition:var(--transition)}
+    .mobile-menu{display:none;position:fixed;inset:0;background:var(--bg);z-index:99;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity var(--transition)}
+    .mobile-menu.open{opacity:1;pointer-events:all}
+    .mobile-menu ul{display:flex;flex-direction:column;align-items:center;gap:2.5rem}
+    .mobile-link{font-family:var(--font-display);font-size:3rem;color:var(--text-dim);transition:color var(--transition)}
+    .mobile-link:hover{color:var(--accent)}
+
+    /* HERO */
+    .hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:8rem 2.5rem 4rem}
+    .hero::before{content:'';position:absolute;top:-20%;right:-10%;width:700px;height:700px;background:radial-gradient(circle,rgba(232,255,71,.07) 0%,transparent 70%);pointer-events:none}
+    .hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--border)}
+    .hero-bg-text{position:absolute;top:50%;right:-5%;transform:translateY(-50%);font-family:var(--font-display);font-size:clamp(10rem,25vw,22rem);color:rgba(255,255,255,.02);line-height:1;pointer-events:none;user-select:none}
+    .hero-content{position:relative;z-index:1;max-width:900px}
+    .hero-tag{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-mono);font-size:.78rem;letter-spacing:.08em;color:var(--text-dim);border:1px solid var(--border);border-radius:100px;padding:.4rem 1rem;margin-bottom:2rem}
+    .tag-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+    .hero-title{font-family:var(--font-display);font-size:clamp(5rem,14vw,12rem);line-height:.92;letter-spacing:-.01em;margin-bottom:1.75rem}
+    .title-line{display:block}
+    .title-accent{-webkit-text-stroke:2px var(--text);color:transparent;position:relative}
+    .title-accent::after{content:attr(data-text);position:absolute;left:0;top:0;color:var(--accent);clip-path:inset(0 100% 0 0);transition:clip-path 1.2s cubic-bezier(.77,0,.175,1) .4s}
+    .title-accent.animated::after{clip-path:inset(0 0% 0 0)}
+    .hero-subtitle{font-size:1.1rem;color:var(--text-dim);font-weight:300;max-width:520px;margin-bottom:2.5rem;line-height:1.7}
+    .hero-cta{display:flex;gap:1rem;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-mono);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;padding:.85rem 1.75rem;border-radius:var(--radius);border:1px solid transparent;transition:var(--transition);cursor:none}
+    .btn-primary{background:var(--accent);color:var(--bg);font-weight:500}
+    .btn-primary:hover{background:#d4ea2a;transform:translateY(-2px)}
+    .btn-ghost{border-color:var(--border);color:var(--text-dim)}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+    .hero-scroll{position:absolute;bottom:2.5rem;left:2.5rem;display:flex;align-items:center;gap:.75rem}
+    .scroll-line{width:40px;height:1px;background:var(--text-muted);position:relative;overflow:hidden}
+    .scroll-line::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--accent);animation:scrollLine 2s infinite 1s}
+    @keyframes scrollLine{0%{left:-100%}100%{left:100%}}
+    .hero-scroll span{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted)}
+
+    /* SECTIONS */
+    .section{padding:7rem 0;position:relative}.section-dark{background:var(--bg-dark)}
+    .section-header{display:flex;align-items:baseline;gap:1rem;margin-bottom:4rem}
+    .section-number{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);letter-spacing:.1em}
+    .section-title{font-family:var(--font-display);font-size:clamp(2.5rem,6vw,4.5rem);line-height:1}
+
+    /* ABOUT */
+    .about-grid{display:grid;grid-template-columns:1fr 340px;gap:4rem;align-items:start}
+    .about-lead{font-size:1.3rem;font-weight:300;line-height:1.6;color:var(--text);margin-bottom:1.5rem}
+    .about-lead em{font-style:italic;color:var(--accent)}
+    .about-body{color:var(--text-dim);font-weight:300;line-height:1.8;margin-bottom:1rem;font-size:.97rem}
+    .about-cert{display:inline-flex;align-items:center;gap:.6rem;margin-top:.5rem;font-family:var(--font-mono);font-size:.75rem;letter-spacing:.06em;color:var(--accent);border:1px solid rgba(232,255,71,.25);border-radius:8px;padding:.5rem 1rem;background:rgba(232,255,71,.05);transition:var(--transition)}
+    .about-cert:hover{background:rgba(232,255,71,.1)}
+    .about-cert svg{width:14px;height:14px;flex-shrink:0}
+    .about-stats{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+    .stat-card{background:var(--bg-card);padding:1.5rem 1.75rem;display:flex;flex-direction:column;gap:.25rem;transition:background var(--transition)}
+    .stat-card:hover{background:rgba(232,255,71,.04)}
+    .stat-number{font-family:var(--font-display);font-size:2.8rem;color:var(--accent);line-height:1}
+    .stat-label{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;color:var(--text-muted);text-transform:uppercase}
+
+    /* PROJECTS — 2 col wide cards */
+    .projects-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+    .project-card{position:relative;background:var(--bg-card);overflow:hidden;transition:background var(--transition)}
+    .project-card:hover{background:rgba(232,255,71,.03)}
+    .project-hover-line{position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--accent);transition:width .45s cubic-bezier(.77,0,.175,1)}
+    .project-card:hover .project-hover-line{width:100%}
+    .project-card-inner{padding:2.25rem 2rem;display:flex;flex-direction:column;gap:1.1rem;height:100%}
+    .project-header{display:flex;justify-content:space-between;align-items:center}
+    .project-num{font-family:var(--font-mono);font-size:.7rem;color:var(--accent);letter-spacing:.1em}
+    .project-links{display:flex;gap:.75rem}
+    .icon-link{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:7px;border:1px solid var(--border);color:var(--text-muted);transition:var(--transition)}
+    .icon-link svg{width:14px;height:14px}
+    .icon-link:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+    .project-badge{display:inline-flex;align-items:center;gap:.35rem;font-family:var(--font-mono);font-size:.65rem;letter-spacing:.06em;color:var(--accent);border:1px solid rgba(232,255,71,.25);border-radius:4px;padding:.2rem .6rem;background:rgba(232,255,71,.06);width:fit-content}
+    .project-name{font-family:var(--font-display);font-size:2.4rem;letter-spacing:.02em;line-height:1.05;color:var(--text)}
+    .project-desc{font-size:.9rem;color:var(--text-muted);line-height:1.78;font-weight:300;flex:1}
+    .project-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:auto;padding-top:.5rem}
+    .tag{font-family:var(--font-mono);font-size:.66rem;letter-spacing:.06em;padding:.25rem .65rem;border-radius:4px;border:1px solid var(--border);color:var(--text-muted);background:rgba(255,255,255,.02);transition:var(--transition)}
+    .project-card:hover .tag{border-color:rgba(232,255,71,.25);color:var(--text-dim)}
+
+    /* TECH */
+    .tech-section-inner{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-bottom:4rem}
+    .tech-group-title{font-family:var(--font-display);font-size:1.5rem;letter-spacing:.02em;color:var(--text-dim);margin-bottom:1.25rem;padding-bottom:.65rem;border-bottom:1px solid var(--border)}
+    .tech-group + .tech-group{margin-top:2rem}
+    .tech-chips{display:flex;flex-wrap:wrap;gap:.55rem}
+    .tech-chip{display:inline-flex;align-items:center;gap:.45rem;font-family:var(--font-mono);font-size:.73rem;letter-spacing:.05em;color:var(--text-dim);border:1px solid var(--border);border-radius:8px;padding:.4rem .85rem;background:var(--bg-card);transition:var(--transition)}
+    .tech-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+    .tech-chip-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:.7;flex-shrink:0}
+    .marquee-wrapper{overflow:hidden;border-top:1px solid var(--border);padding-top:2rem}
+    .marquee{display:flex;gap:2rem;font-family:var(--font-display);font-size:1.5rem;letter-spacing:.05em;color:var(--text-muted);white-space:nowrap;animation:marquee 24s linear infinite}
+    .marquee span:nth-child(even){color:var(--accent);opacity:.4}
+    @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+    /* CONTACT */
+    .section-contact{background:var(--bg-dark)}
+    .contact-layout{display:grid;grid-template-columns:1fr auto;gap:4rem;align-items:center}
+    .contact-lead{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.5rem);line-height:1.1;margin-bottom:1rem}
+    .contact-body{color:var(--text-dim);font-weight:300;max-width:420px;line-height:1.8;margin-bottom:2rem;font-size:.97rem}
+    .contact-email{display:inline-flex;align-items:center;gap:.75rem;font-size:1.05rem;color:var(--accent);border-bottom:1px solid rgba(232,255,71,.3);padding-bottom:.25rem;transition:var(--transition)}
+    .contact-email svg{width:20px;height:20px;transition:transform var(--transition)}
+    .contact-email:hover{border-color:var(--accent)}.contact-email:hover svg{transform:translateX(4px)}
+    .contact-phone{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--font-mono);font-size:.85rem;color:var(--text-dim);margin-top:1rem;letter-spacing:.05em;transition:color var(--transition)}
+    .contact-phone svg{width:16px;height:16px}
+    .contact-phone:hover{color:var(--accent)}
+    .contact-links{display:flex;flex-direction:column;gap:1rem}
+    .social-link{display:flex;align-items:center;gap:.75rem;font-family:var(--font-mono);font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1.25rem;transition:var(--transition);min-width:175px}
+    .social-link svg{width:18px;height:18px;flex-shrink:0}
+    .social-link:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim);transform:translateX(4px)}
+
+    /* FOOTER */
+    .footer{padding:2rem 0;border-top:1px solid var(--border)}
+    .footer-inner{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+    .footer-logo{font-family:var(--font-display);font-size:1.5rem;color:var(--text-muted)}
+    .footer-logo span{color:var(--accent)}
+    .footer-copy{font-family:var(--font-mono);font-size:.72rem;color:var(--text-muted);letter-spacing:.06em}
+    .footer-top{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);transition:color var(--transition)}
+    .footer-top:hover{color:var(--accent)}
+
+    /* REVEAL */
+    .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+
+    /* RESPONSIVE */
+    @media(max-width:960px){
+      .about-grid{grid-template-columns:1fr;gap:2.5rem}
+      .about-stats{flex-direction:row;flex-wrap:wrap;gap:0}
+      .stat-card{flex:1;min-width:120px}
+      .projects-grid{grid-template-columns:1fr}
+      .tech-section-inner{grid-template-columns:1fr}
+      .contact-layout{grid-template-columns:1fr;gap:2.5rem}
+    }
+    @media(max-width:640px){
+      .nav{padding:1rem 1.25rem}.nav-links{display:none}
+      .hamburger{display:flex}.mobile-menu{display:flex}
+      .hero{padding:6rem 1.25rem 3rem}.container{padding:0 1.25rem}
+      .section{padding:5rem 0}
+      .footer-inner{flex-direction:column;text-align:center;gap:.75rem}
+      .cursor,.cursor-dot{display:none}body{cursor:auto}a,button{cursor:pointer}
+    }
+  </style>
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <nav class="nav" id="nav">
+    <div class="nav-logo">FV<span class="nav-dot">.</span></div>
+    <ul class="nav-links">
+      <li><a href="#sobre-mi" class="nav-link">Sobre mí</a></li>
+      <li><a href="#proyectos" class="nav-link">Proyectos</a></li>
+      <li><a href="#tecnologias" class="nav-link">Stack</a></li>
+      <li><a href="#contacto" class="nav-link">Contacto</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="#sobre-mi" class="mobile-link">Sobre mí</a></li>
+      <li><a href="#proyectos" class="mobile-link">Proyectos</a></li>
+      <li><a href="#tecnologias" class="mobile-link">Stack</a></li>
+      <li><a href="#contacto" class="mobile-link">Contacto</a></li>
+    </ul>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div class="hero-bg-text">DEV</div>
+    <div class="hero-content">
+      <div class="hero-tag reveal"><span class="tag-dot"></span> Disponible para proyectos</div>
+      <h1 class="hero-title reveal">
+        <span class="title-line">Fernando</span>
+        <span class="title-line title-accent">Vélez</span>
+      </h1>
+      <p class="hero-subtitle reveal">
+        Desarrollador full stack especializado en aplicaciones web modernas,
+        integración de IA, pasarelas de pago y automatización de procesos.
+      </p>
+      <div class="hero-cta reveal">
+        <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
+        <a href="#contacto" class="btn btn-ghost">Hablemos</a>
+      </div>
+    </div>
+    <div class="hero-scroll"><div class="scroll-line"></div><span>scroll</span></div>
+  </section>
+
+  <!-- SOBRE MÍ -->
+  <section class="section" id="sobre-mi">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">01</span>
+        <h2 class="section-title">Sobre mí</h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <p class="about-lead">Soy desarrollador <em>full stack</em> apasionado por construir productos digitales que resuelvan problemas reales.</p>
+          <p class="about-body">Trabajo con Python, JavaScript, React y FastAPI para crear sistemas eficientes y escalables, desde el diseño de interfaces hasta la arquitectura del backend. He integrado APIs externas como Google Calendar y Outlook Calendar, implementado autenticación OAuth 2.0 y conectado servicios de inteligencia artificial para procesamiento de lenguaje natural.</p>
+          <p class="about-body">Tengo experiencia desarrollando PWAs con Service Workers e IndexedDB, notificaciones en tiempo real con Web Push (VAPID), síntesis de voz (TTS), tareas programadas con APScheduler, pasarelas de pago y sistemas de caché para optimización del rendimiento.</p>
+          <p class="about-body">Utilizo GitHub Actions para CI/CD con despliegues automatizados en Railway y Vercel. Aplico metodologías ágiles, XP y desarrollo incremental con arquitectura en tres capas.</p>
+          <a href="https://certificados.thebigschool.com/wp-content/uploads/certs/MDEV2/Certificado-Fernando-Jose-Velez-Cajal-ek2cft81.pdf" target="_blank" class="about-cert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15l2 2 4-4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18M9 4v5"/></svg>
+            Certificado · Desarrollo con IA como herramienta — The Big School
+          </a>
+        </div>
+        <div class="about-stats reveal">
+          <div class="stat-card"><span class="stat-number">2</span><span class="stat-label">Proyectos en producción</span></div>
+          <div class="stat-card"><span class="stat-number">15+</span><span class="stat-label">Tecnologías</span></div>
+          <div class="stat-card"><span class="stat-number">CI/CD</span><span class="stat-label">Railway · Vercel</span></div>
+          <div class="stat-card"><span class="stat-number">∞</span><span class="stat-label">Ganas de aprender</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROYECTOS -->
+  <section class="section section-dark" id="proyectos">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">02</span>
+        <h2 class="section-title">Proyectos</h2>
+      </div>
+      <div class="projects-grid">
+
+        <!-- CogniCore -->
+        <article class="project-card reveal">
+          <div class="project-card-inner">
+            <div class="project-header">
+              <span class="project-num">01</span>
+              <div class="project-links">
+                <a href="https://cognicore-productividad-academica-con-ia.vercel.app" target="_blank" class="icon-link" title="Ver en producción">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+                <a href="https://github.com/fernandovelezc1-cmd/cognicore.git" target="_blank" class="icon-link" title="Ver código en GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49v-1.72c-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.1-1.5-1.1-1.5-.9-.63.07-.62.07-.62 1 .07 1.52 1.05 1.52 1.05.89 1.56 2.33 1.11 2.9.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05A9.38 9.38 0 0112 6.84c.85 0 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.49A10.27 10.27 0 0022 12.26C22 6.58 17.52 2 12 2z"/></svg>
+                </a>
+              </div>
+            </div>
+            <div class="project-badge">
+              <svg width="8" height="8" viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>
+              En producción · Vercel
+            </div>
+            <h3 class="project-name">CogniCore</h3>
+            <p class="project-desc">Plataforma de productividad académica con IA. Incluye gestión de tareas, calendario sincronizado con Google Calendar y Outlook via OAuth 2.0, técnica Pomodoro, notificaciones Web Push (VAPID), asistente IA para resumir documentos y responder consultas de investigación. Funciona como PWA con soporte offline gracias a Service Workers e IndexedDB.</p>
+            <div class="project-tags">
+              <span class="tag">React + Vite</span>
+              <span class="tag">Python / FastAPI</span>
+              <span class="tag">Supabase · PostgreSQL</span>
+              <span class="tag">OAuth 2.0</span>
+              <span class="tag">Google Calendar API</span>
+              <span class="tag">IA / NLP</span>
+              <span class="tag">PWA</span>
+              <span class="tag">Web Push VAPID</span>
+              <span class="tag">APScheduler</span>
+              <span class="tag">TTS</span>
+            </div>
+          </div>
+          <div class="project-hover-line"></div>
+        </article>
+
+        <!-- FluxPay -->
+        <article class="project-card reveal">
+          <div class="project-card-inner">
+            <div class="project-header">
+              <span class="project-num">02</span>
+              <div class="project-links">
+                <a href="#" class="icon-link" title="Demo">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+                <a href="https://github.com/fernandovelezc1-cmd/Pasarela-FluxPay.git" target="_blank" class="icon-link" title="Ver código en GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49v-1.72c-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.1-1.5-1.1-1.5-.9-.63.07-.62.07-.62 1 .07 1.52 1.05 1.52 1.05.89 1.56 2.33 1.11 2.9.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05A9.38 9.38 0 0112 6.84c.85 0 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.49A10.27 10.27 0 0022 12.26C22 6.58 17.52 2 12 2z"/></svg>
+                </a>
+              </div>
+            </div>
+            <div class="project-badge">
+              <svg width="8" height="8" viewBox="0 0 10 10" fill="#f59e0b"><circle cx="5" cy="5" r="5"/></svg>
+              <span style="color:#f59e0b">En desarrollo</span>
+            </div>
+            <h3 class="project-name">FluxPay</h3>
+            <p class="project-desc">Pasarela de pagos end-to-end integrada con Wompi. Soporta Tarjeta, Nequi y PSE con cifrado SHA-256 para firmas de integridad y tokens de aceptación por transacción. Backend en Node.js + Express.js protegido con Helmet.js y rate limiting. Incluye panel de administración con métricas en tiempo real, filtros por estado y email, historial paginado e impresión de facturas.</p>
+            <div class="project-tags">
+              <span class="tag">Node.js</span>
+              <span class="tag">Express.js</span>
+              <span class="tag">HTML5 · CSS3 · JS Vanilla</span>
+              <span class="tag">Wompi API</span>
+              <span class="tag">SHA-256</span>
+              <span class="tag">Helmet.js</span>
+              <span class="tag">Rate Limiting</span>
+              <span class="tag">CORS</span>
+              <span class="tag">Axios</span>
+            </div>
+          </div>
+          <div class="project-hover-line"></div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TECNOLOGÍAS -->
+  <section class="section" id="tecnologias">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">03</span>
+        <h2 class="section-title">Stack tecnológico</h2>
+      </div>
+
+      <div class="tech-section-inner reveal">
+        <div>
+          <div class="tech-group-title">Lenguajes & Frontend</div>
+          <div class="tech-chips">
+            <span class="tech-chip"><span class="tech-chip-dot"></span>Python</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>JavaScript</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>HTML5</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>CSS3</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>React</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>Vite</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>Next.js</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>PWA · Service Workers</span>
+          </div>
+
+          <div style="margin-top:2rem">
+            <div class="tech-group-title">Backend & APIs</div>
+            <div class="tech-chips">
+              <span class="tech-chip"><span class="tech-chip-dot"></span>FastAPI</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>Node.js</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>Express.js</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>Axios</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>OAuth 2.0</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>Google Calendar API</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>Outlook API</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>Wompi</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>Web Push (VAPID)</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>APScheduler</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>TTS</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="tech-group-title">Datos & Seguridad</div>
+          <div class="tech-chips">
+            <span class="tech-chip"><span class="tech-chip-dot"></span>PostgreSQL</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>Supabase</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>IndexedDB</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>Caché LRU</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>SHA-256</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>Helmet.js</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>Rate Limiting</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>CORS</span>
+            <span class="tech-chip"><span class="tech-chip-dot"></span>Crypto-js</span>
+          </div>
+
+          <div style="margin-top:2rem">
+            <div class="tech-group-title">IA, DevOps & Metodologías</div>
+            <div class="tech-chips">
+              <span class="tech-chip"><span class="tech-chip-dot"></span>IA / NLP</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>Git & GitHub</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>GitHub Actions</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>Railway</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>Vercel</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>Agile / Scrum</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>XP</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>Arq. 3 capas</span>
+              <span class="tech-chip"><span class="tech-chip-dot"></span>CI/CD</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="marquee-wrapper reveal">
+        <div class="marquee">
+          <span>Python</span><span>·</span><span>React</span><span>·</span><span>FastAPI</span><span>·</span><span>Node.js</span><span>·</span><span>Express.js</span><span>·</span><span>Wompi</span><span>·</span><span>Supabase</span><span>·</span><span>OAuth 2.0</span><span>·</span><span>PWA</span><span>·</span><span>SHA-256</span><span>·</span><span>GitHub Actions</span><span>·</span><span>Vercel</span><span>·</span><span>Railway</span><span>·</span><span>IA / NLP</span><span>·</span>
+          <span>Python</span><span>·</span><span>React</span><span>·</span><span>FastAPI</span><span>·</span><span>Node.js</span><span>·</span><span>Express.js</span><span>·</span><span>Wompi</span><span>·</span><span>Supabase</span><span>·</span><span>OAuth 2.0</span><span>·</span><span>PWA</span><span>·</span><span>SHA-256</span><span>·</span><span>GitHub Actions</span><span>·</span><span>Vercel</span><span>·</span><span>Railway</span><span>·</span><span>IA / NLP</span><span>·</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section class="section section-contact" id="contacto">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-number">04</span>
+        <h2 class="section-title">Contacto</h2>
+      </div>
+      <div class="contact-layout reveal">
+        <div class="contact-text">
+          <p class="contact-lead">¿Tienes un proyecto en mente?</p>
+          <p class="contact-body">Estoy abierto a nuevas oportunidades, colaboraciones y proyectos freelance. No dudes en escribirme o llamarme.</p>
+          <a href="mailto:fernandovelez672@gmail.com" class="contact-email">
+            fernandovelez672@gmail.com
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <br/>
+          <a href="tel:+573163981176" class="contact-phone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.39 1.2 2 2 0 012.38 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.07 6.07l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            +57 316 398 1176
+          </a>
+        </div>
+        <div class="contact-links">
+          <a href="https://github.com/fernandovelezc1-cmd" target="_blank" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49v-1.72c-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.1-1.5-1.1-1.5-.9-.63.07-.62.07-.62 1 .07 1.52 1.05 1.52 1.05.89 1.56 2.33 1.11 2.9.85.09-.66.35-1.11.63-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05A9.38 9.38 0 0112 6.84c.85 0 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.49A10.27 10.27 0 0022 12.26C22 6.58 17.52 2 12 2z"/></svg>
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/in/fernando-velez" target="_blank" class="social-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </a>
+          <a href="https://certificados.thebigschool.com/wp-content/uploads/certs/MDEV2/Certificado-Fernando-Jose-Velez-Cajal-ek2cft81.pdf" target="_blank" class="social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15l2 2 4-4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18M9 4v5"/></svg>
+            Certificado IA
+          </a>
+          <a href="https://github.com/fernandovelezc1-cmd/fercho672.github.io.git" target="_blank" class="social-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Portafolio repo
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">FV<span>.</span></span>
+        <span class="footer-copy">© 2026 Fernando Vélez. Todos los derechos reservados.</span>
+        <a href="#inicio" class="footer-top">↑ Volver arriba</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const cursor=document.getElementById('cursor'),dot=document.getElementById('cursorDot');
+    let mx=0,my=0,cx=0,cy=0;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px'});
+    (function anim(){cx+=(mx-cx)*.12;cy+=(my-cy)*.12;cursor.style.left=cx+'px';cursor.style.top=cy+'px';requestAnimationFrame(anim)})();
+    document.querySelectorAll('a,button,.project-card,.stat-card,.tech-chip').forEach(el=>{
+      el.addEventListener('mouseenter',()=>{cursor.style.width='60px';cursor.style.height='60px';cursor.style.background='rgba(232,255,71,.08)'});
+      el.addEventListener('mouseleave',()=>{cursor.style.width='36px';cursor.style.height='36px';cursor.style.background='transparent'});
+    });
+    const nav=document.getElementById('nav');
+    window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>60),{passive:true});
+    const hb=document.getElementById('hamburger'),mm=document.getElementById('mobileMenu');
+    let open=false;
+    hb.addEventListener('click',()=>{
+      open=!open;mm.classList.toggle('open',open);document.body.style.overflow=open?'hidden':'';
+      const s=hb.querySelectorAll('span');
+      if(open){s[0].style.transform='translateY(6.5px) rotate(45deg)';s[1].style.opacity='0';s[2].style.transform='translateY(-6.5px) rotate(-45deg)'}
+      else s.forEach(x=>{x.style.transform='';x.style.opacity=''});
+    });
+    document.querySelectorAll('.mobile-link').forEach(l=>l.addEventListener('click',()=>{
+      open=false;mm.classList.remove('open');document.body.style.overflow='';
+      hb.querySelectorAll('span').forEach(x=>{x.style.transform='';x.style.opacity=''});
+    }));
+    const ro=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{if(e.isIntersecting){
+        const s=Array.from(e.target.parentElement.querySelectorAll('.reveal'));
+        setTimeout(()=>e.target.classList.add('visible'),s.indexOf(e.target)*100);
+        ro.unobserve(e.target);
+      }});
+    },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+    document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+    const ta=document.querySelector('.title-accent');
+    if(ta){ta.setAttribute('data-text',ta.textContent);setTimeout(()=>ta.classList.add('animated'),400)}
+    document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',function(e){
+      const t=document.querySelector(this.getAttribute('href'));
+      if(t){e.preventDefault();window.scrollTo({top:t.offsetTop-nav.offsetHeight-16,behavior:'smooth'})}
+    }));
+  </script>
+</body>
+</html>
